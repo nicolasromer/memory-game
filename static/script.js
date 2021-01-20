@@ -9,7 +9,7 @@ const instructionDiv = document.getElementById('instruction');
 const gameDiv = document.getElementById('game');
 const buttonDiv = document.getElementById('button');
 
-// dom helpers
+// TODO: Card class with all these functions
 const getCardHtml = (number) => (
     // ToDo: make accessible with keyboard
     `<div
@@ -19,17 +19,23 @@ const getCardHtml = (number) => (
         ${number}
     </div>`
 );
+
 const getCards = () => Array.from(document.getElementsByClassName('card'));
+
 const getCardNumber = (card) => parseInt(card.dataset.number, 10);
+
 const insertCards = (numbers) => {
     gameDiv.innerHTML = numbers.map(number => getCardHtml(number)).join('');
 };
+
 const hideCard = card => {
     card.style.height = '10px';
     card.style.color = 'rgb(0, 0, 0, 0)';
     setTimeout(() => card.remove(), 200);
 }
+
 const hideCards = () => getCards().forEach(card => hideCard(card));
+
 const flipDown = (card) => {
     card.style.height = '0px';
     card.style.color = 'rgb(0, 0, 0, 0)';
@@ -37,6 +43,7 @@ const flipDown = (card) => {
         card.style.height = cardHeight +'px';
     }, 200);
 }
+
 const flipUp = (card) => {
     card.style.height = '0px';
     card.style.color = 'black';
@@ -44,6 +51,7 @@ const flipUp = (card) => {
         card.style.height = cardHeight +'px';
     }, 200);
 }
+
 const setInstruction = instruction => {
     instructionDiv.innerHTML = `<p>${instruction}</p>`;
 }
@@ -139,6 +147,7 @@ const scoringPhase = (state, nextGameStep) => {
 
     buttonDiv.innerHTML = "<button>Again, again!</button>";
     buttonDiv.onclick = () => {
+        buttonDiv.innerHTML = '';
         nextGameStep();
     }
 }

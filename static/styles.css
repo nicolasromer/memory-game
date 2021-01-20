@@ -10,6 +10,7 @@ h2 {
 
 #game {
     width: 100%;
+    min-height: 222px;
 }
 
 .card {
@@ -52,11 +53,8 @@ h2 {
     0% {
         color: white;
     }
-    33% {
-        color: yellow;
-    }
-    66% {
-        color: blueviolet;
+    50% {
+        color: black;
     }
     100% {
         color: white;
@@ -64,7 +62,7 @@ h2 {
 }
 
 .perfect {
-    animation: pulse 1s infinite;
+    animation: pulse 4s infinite;
 }
 
 #final-score {
