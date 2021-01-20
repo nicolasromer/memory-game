@@ -6,38 +6,55 @@ const gameSizes = [4,8,12];
 // dom references
 const instructionDiv = document.getElementById('instruction');
 const gameDiv = document.getElementById('game');
+const buttonDiv = document.getElementById('button');
 
 // dom helpers
 const getCardHtml = (number, handleClick) => `<div class="card" data-number="${number}">${number}</div>`;
+const getCards = () => Array.from(document.getElementsByClassName('card'));
+const getCardNumber = (card) => parseInt(card.dataset.number, 10);
+const insertCards = (numbers) => {
+    gameDiv.innerHTML = numbers.map(number => getCardHtml(number)).join('');
+};
+const hideCard = card => {
+    card.style.height = '10px';
+    card.style.color = 'rgb(0, 0, 0, 0)';
+    setTimeout(() => card.remove(), 200);
+}
 const setInstruction = instruction => {
     instructionDiv.innerHTML = `<p>${instruction}</p>`;
 }
 
-// state
-let state =  {
-    gameSize: null,
-};
-
-const resetState = () => {state = {}};
-
 // game steps
-const showGameSizeChoice = () => {
+const showGameSizeChoice = (state, nextGameStep) => {
     setInstruction('How many cards can you remember?');
+    insertCards(gameSizes);
 
-    gameDiv.innerHTML = gameSizes.map(size => getCardHtml(size)).join('');
-
-    const cards = Array.from(document.getElementsByClassName('card'));
-
+    const cards = getCards();
     cards.forEach(el => el.addEventListener("click", e => {
-        const number = () => parseInt(e.target.dataset.number, 10);
-        state.gameSize = number;
-        cards.forEach(c => c.remove())
+        const number = getCardNumber(e.target);
+        cards.forEach(hideCard);
+        const newState = {...state, gameSize: number};
+        nextGameStep(newState);
     }));
 }
 
+const memorizeCards = (state, nextGameStep) => {
+    setInstruction('Okay now, memorize these cards!');
+
+    buttonDiv.innerHTML = "<button>I'm Ready</button>";
+    buttonDiv.onclick = nextGameStep(state);
+
+    const cardCount = state.gameSize;
+    const getRandomBelow100 = () => Math.floor(Math.random() * Math.floor(100))
+    const numbers = [...new Array(cardCount)].map(() => getRandomBelow100())
+    insertCards(numbers);
+}
+
 const startGame = () => {
-    resetState()
-    showGameSizeChoice();
+    showGameSizeChoice({},
+        (state) => memorizeCards(state, ()=> {}),
+    );
+
 
 
 }

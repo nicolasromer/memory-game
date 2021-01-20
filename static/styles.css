@@ -4,22 +4,39 @@ body {
     font-family: helvetica;
 }
 
+h2 {
+    color: white;
+}
+
 #game {
     width: 100%;
-
 }
 
 .card {
     display: inline-block;
-    margin: 0 15px 15px 0;
-    width: 160px;
+    margin: 0 20px 20px 0;
+    width: 150px;
     height: 200px;
 
+    transition: 0.2s ease-in;
     text-align: center;
+    font-family: courier;
     font-size: 80px;
     line-height: 2.3;
     background: white;
     border-radius: 5px;
     border: 1px solid black;
-    box-shadow: 0 0 0 2px hsl(0, 0%, 100%);
+    box-shadow: 0 0 0 4px hsl(0, 0%, 100%);
+}
+
+#button {
+    display: inline-block;
+    width: 150px;
+}
+
+#button > button {
+    color: white;
+    border-radius: 5px;
+    background: indigo;
+    padding: 10px 15px;
 }
