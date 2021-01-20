@@ -18,6 +18,7 @@ h2 {
     width: 150px;
     height: 200px;
 
+    cursor: pointer;
     transition: 0.2s ease-in;
     text-align: center;
     font-family: courier;
@@ -28,6 +29,11 @@ h2 {
     border: 1px solid black;
     box-shadow: 0 0 0 4px hsl(0, 0%, 100%);
 }
+.card:focus {
+    border-color: black;
+    box-shadow: 0 0 0 4px indigo;
+}
+
 
 #button {
     display: inline-block;
@@ -39,4 +45,30 @@ h2 {
     border-radius: 5px;
     background: indigo;
     padding: 10px 15px;
+    border: none;
+}
+
+@keyframes pulse {
+    0% {
+        color: white;
+    }
+    33% {
+        color: yellow;
+    }
+    66% {
+        color: blueviolet;
+    }
+    100% {
+        color: white;
+    }
+}
+
+.perfect {
+    animation: pulse 1s infinite;
+}
+
+#final-score {
+    font-size: 100px;
+    font-weight: bold;
+    color: white;
 }
