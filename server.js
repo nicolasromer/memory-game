@@ -8,6 +8,13 @@ const mimeTypes = {
     '.css': 'text/css',
 };
 
+const onSuccess = () => {
+    const url = 'http://127.0.0.1:5858/';
+    console.log('Server running at ' + url);
+    const childProc = require('child_process');
+    childProc.exec(`open -a "Google Chrome" ${url}`);
+}
+
 http.createServer(function (request, response) {
     console.log('request ', request.url);
 
@@ -28,8 +35,6 @@ http.createServer(function (request, response) {
             return;
         }
 
-        console.log(error);
-
         if(error.code === 'ENOENT') {
             fs.readFile('./404.html', function(error, content) {
                 response.writeHead(404, { 'Content-Type': 'text/html' });
@@ -42,4 +47,5 @@ http.createServer(function (request, response) {
     });
 
 }).listen(5858);
-console.log('Server running at http://127.0.0.1:5858/');
+
+onSuccess();

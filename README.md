@@ -21,3 +21,8 @@ Bonus (optional)
 Technical Requirements
 - The random numbers are chosen by the backend.
 - Bonus (optional): code tests.
+
+# To Run
+developed with node 10
+clone the repo and `cd` into the root
+run `node server.js` 
