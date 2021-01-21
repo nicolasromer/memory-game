@@ -151,8 +151,17 @@ const scoringPhase = (state, nextGameStep) => {
     }
 }
 
+/*
+ TODO: Type definition for State
+ type State {
+    score: number,
+    gameSize: number,
+    ...
+ }
+ */
+
 // TODO: use a generator function here;
-// FIXME: this will overflow the stack after enough games
+// FIXME: this will overflow the stack after enough games without a page refresh
 const startGame = async () => {
     showGameSizeChoice({},
         (state2) => memorizeCards(state2,
