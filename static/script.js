@@ -9,7 +9,7 @@ const instructionDiv = document.getElementById('instruction');
 const gameDiv = document.getElementById('game');
 const buttonDiv = document.getElementById('button');
 
-// TODO: Card class with all these functions
+// TODO: create Card class with all these functions
 const getCardHtml = (number) => (
     // ToDo: make accessible with keyboard
     `<div
