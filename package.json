@@ -1,0 +1,23 @@
+{
+  "name": "memory-game",
+  "version": "1.0.0",
+  "description": "A good memory game",
+  "main": "server.js",
+  "scripts": {
+    "test": "node test.js",
+    "start": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/nicolasromer/memory-game.git"
+  },
+  "author": "nicolas romer",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/nicolasromer/memory-game/issues"
+  },
+  "homepage": "https://github.com/nicolasromer/memory-game#readme",
+  "devDependencies": {
+    "node-fetch": "^2.6.1"
+  }
+}

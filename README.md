@@ -22,7 +22,12 @@ Technical Requirements
 - The random numbers are chosen by the backend.
 - Bonus (optional): code tests.
 
-# To Run
+# To Run server
 developed with node 10
 clone the repo and `cd` into the root
-run `node server.js` 
+run `npm run server`
+
+# Tests
+ensure server is running
+run `npm run test`
+test output will show up in your terminal

@@ -70,19 +70,18 @@ const showGameSizeChoice = (state, nextGameStep) => {
     }));
 }
 
-const memorizeCards = (state, nextGameStep) => {
-    setInstruction('Okay now, memorize these cards!');
+const memorizeCards = async (state, nextGameStep) => {
+    setInstruction('Loading cards...');
 
     const cardCount = state.gameSize;
+    const cardResponse = await fetch('/cards/' + cardCount);
+    const cards = await cardResponse.json();
 
-    const getRandomBelow100 = () => Math.floor(Math.random() * Math.floor(100))
+    setInstruction('Okay now, memorize these cards!');
 
-    // fixme: possible to have two numbers the same
-    const numbers = [...new Array(cardCount)].map(() => getRandomBelow100())
+    insertCards(cards);
 
-    insertCards(numbers);
-
-    const newState = {...state, cardNumbers: numbers};
+    const newState = {...state, cardNumbers: cards};
 
     buttonDiv.innerHTML = "<button>I'm Ready</button>";
     buttonDiv.onclick = () => {
@@ -154,7 +153,7 @@ const scoringPhase = (state, nextGameStep) => {
 
 // TODO: use a generator function here;
 // FIXME: this will overflow the stack after enough games
-const startGame = () => {
+const startGame = async () => {
     showGameSizeChoice({},
         (state2) => memorizeCards(state2,
             (state3)=> guessingPhase(state3,
