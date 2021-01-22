@@ -1,72 +1,18 @@
-import Card from '../elements/Card.js'; // relative to "/static"
+// imports are relative to "/static" since they're coming from the server
+import Game from '../elements/Game.js';
 
 console.log('script loaded');
 
 // static configuration
 const gameSizes = [4,8,12];
 
-
 // dom references
 const instructionDiv = document.getElementById('instruction');
 const gameDiv = document.getElementById('game');
 const buttonDiv = document.getElementById('button');
 
+const game = new Game(gameDiv);
 
-// TODO: create Card class with all these functions
-const getCardHtml = (number) => (
-    // ToDo: make accessible with keyboard
-    `<div
-        class="card"
-        data-number="${number}"
-    >
-        ${number}
-    </div>`
-);
-
-// TODO: Create CardSet class to house these functions
-const getCards = () => Array.from(document.getElementsByClassName('card'))
-    .map(card => new Card(card));
-
-const flipDownCards = () => {
-    getCards().forEach((card, index) => {
-        setTimeout(() => card.flipDown(), index * 50);
-    });
-}
-
-const insertCards = (numbers) => {
-    gameDiv.innerHTML = numbers.map(number => getCardHtml(number)).join('');
-};
-
-const removeCards = () => getCards().forEach(card => card.remove());
-
-const activateCardsForPlay = (onComplete, onPoint) => {
-    const hiddenCards = getCards().map(card => card.getNumber());
-
-    getCards().forEach((card /* : Card */, index) => {
-        card.$node.addEventListener("click", e => {
-            const number = card.getNumber();
-            if (isLowest(number, hiddenCards)) {
-                card.flipUp();
-
-                // fixme: mutation
-                remove(number, hiddenCards);
-
-                onPoint()
-            }
-
-            if (!hiddenCards.length) {
-                onComplete()
-            }
-        })
-    });
-}
-
-const isLowest = (number, set) => number === Math.min(...set);
-
-const remove = (number, set) => set.splice(set.indexOf(number), 1)
-// end class CardSet
-
-// could go in a class "Game" along with button functions and main orchestration function
 const setInstruction = instruction => {
     instructionDiv.innerHTML = `<p>${instruction}</p>`;
 }
@@ -74,14 +20,14 @@ const setInstruction = instruction => {
 // game steps
 const chooseGameSizeStep = (state, nextGameStep) => {
     setInstruction('How many cards can you remember?');
-    insertCards(gameSizes);
+    game.insertCards(gameSizes);
 
-    const cards = getCards();
+    const cards = game.getCards();
 
     cards.forEach(card => card.$node.addEventListener("click", e => {
-        const clickedCard = new Card(e.target);
-        const number = clickedCard.getNumber();
-        cards.forEach(card => card.remove);
+        const number = card.getNumber();
+
+        game.removeCards();
 
         const newState = {...state, gameSize: number};
         nextGameStep(newState);
@@ -97,7 +43,7 @@ const memorizationStep = async (state, nextGameStep) => {
 
     setInstruction('Okay now, memorize these cards!');
 
-    insertCards(cards);
+    game.insertCards(cards);
 
     const newState = {...state, cardNumbers: cards};
 
@@ -111,17 +57,17 @@ const memorizationStep = async (state, nextGameStep) => {
 const guessingStep = (state, nextGameStep) => {
     setInstruction('Now, click the cards in order, from lowest to highest.');
 
-    flipDownCards();
+    game.flipDownCards();
 
     let score = 0
     const addPoint = () => score += 1;
 
     const endRound = () => {
-        removeCards();
+        game.removeCards();
         nextGameStep({...state, score});
     }
 
-    activateCardsForPlay(endRound, addPoint);
+    game.activateCardsForPlay(endRound, addPoint);
 
     buttonDiv.innerHTML = "<button>I Give Up :(</button>";
     buttonDiv.onclick = () => {
@@ -129,19 +75,10 @@ const guessingStep = (state, nextGameStep) => {
     }
 }
 
-const reviewScoreStep = (state, nextGameStep) => {
+const reviewScoreStep = ({score, gameSize}, nextGameStep) => {
     setInstruction('Your score is:');
 
-    const {score, gameSize} = state;
-
-    const perfect = (score === gameSize);
-
-    gameDiv.innerHTML = `
-        <div id="final-score" class="${perfect ? 'perfect': ''}">
-            ${score}/${gameSize}
-        </div>
-        <h1>${perfect ? 'Perfect Score! Beer\'s on me.' : 'Nice Try!'}</h1>
-    `;
+    game.showScore(score, gameSize);
 
     buttonDiv.innerHTML = "<button>Again, again!</button>";
     buttonDiv.onclick = () => {

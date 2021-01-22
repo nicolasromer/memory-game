@@ -1,6 +1,16 @@
 
 const cardHeight = 200;
 
+export const getHtml = (number) => (
+    // ToDo: make accessible with keyboard
+    `<div
+        class="card"
+        data-number="${number}"
+    >
+        ${number}
+    </div>`
+)
+
 class Card {
     $node;
 
