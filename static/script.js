@@ -9,6 +9,50 @@ const instructionDiv = document.getElementById('instruction');
 const gameDiv = document.getElementById('game');
 const buttonDiv = document.getElementById('button');
 
+class Card {
+    $node;
+
+    constructor(domNode) {
+        if (!this.isValidCard(domNode)) {
+            throw new Error('constructing Card requires a node with data-number and class "card"')
+        }
+        this.$node = domNode;
+    }
+
+    /* private */
+    isValidCard(node) {
+        return  node.dataset &&
+                node.dataset.number &&
+                node.className === 'card';
+    }
+
+    getNumber() {
+        return parseInt(this.$node.dataset.number, 10);
+    }
+
+    remove() {
+        this.$node.style.height = '10px';
+        this.$node.style.color = 'rgb(0, 0, 0, 0)';
+        setTimeout(() => this.$node.remove(), 200);
+    }
+
+    flipDown() {
+        this.$node.style.height = '0px';
+        this.$node.style.color = 'rgb(0, 0, 0, 0)';
+        setTimeout(()=>{
+            this.$node.style.height = cardHeight +'px';
+        }, 200);
+    }
+
+    flipUp () {
+        this.$node.style.height = '0px';
+        this.$node.style.color = 'black';
+        setTimeout(()=>{
+            this.$node.style.height = cardHeight +'px';
+        }, 200);
+    }
+}
+
 // TODO: create Card class with all these functions
 const getCardHtml = (number) => (
     // ToDo: make accessible with keyboard
@@ -20,57 +64,72 @@ const getCardHtml = (number) => (
     </div>`
 );
 
-const getCards = () => Array.from(document.getElementsByClassName('card'));
+// TODO: Create CardSet class to house these functions
+const getCards = () => Array.from(document.getElementsByClassName('card'))
+    .map(card => new Card(card));
 
-const getCardNumber = (card) => parseInt(card.dataset.number, 10);
+const flipDownCards = () => {
+    getCards().forEach((card, index) => {
+        setTimeout(() => card.flipDown(), index * 50);
+    });
+}
 
 const insertCards = (numbers) => {
     gameDiv.innerHTML = numbers.map(number => getCardHtml(number)).join('');
 };
 
-const hideCard = card => {
-    card.style.height = '10px';
-    card.style.color = 'rgb(0, 0, 0, 0)';
-    setTimeout(() => card.remove(), 200);
+const removeCards = () => getCards().forEach(card => card.remove());
+
+const activateCardsForPlay = (onComplete, onPoint) => {
+    const hiddenCards = getCards().map(card => card.getNumber());
+
+    getCards().forEach((card /* : Card */, index) => {
+        card.$node.addEventListener("click", e => {
+            const number = card.getNumber();
+            if (isLowest(number, hiddenCards)) {
+                card.flipUp();
+
+                // fixme: mutation
+                remove(number, hiddenCards);
+
+                onPoint()
+            }
+
+            if (!hiddenCards.length) {
+                onComplete()
+            }
+        })
+    });
 }
 
-const hideCards = () => getCards().forEach(card => hideCard(card));
+const isLowest = (number, set) => number === Math.min(...set);
 
-const flipDown = (card) => {
-    card.style.height = '0px';
-    card.style.color = 'rgb(0, 0, 0, 0)';
-    setTimeout(()=>{
-        card.style.height = cardHeight +'px';
-    }, 200);
-}
+const remove = (number, set) => set.splice(set.indexOf(number), 1)
+// end class CardSet
 
-const flipUp = (card) => {
-    card.style.height = '0px';
-    card.style.color = 'black';
-    setTimeout(()=>{
-        card.style.height = cardHeight +'px';
-    }, 200);
-}
-
+// could go in a class "Game" along with button functions and main orchestration function
 const setInstruction = instruction => {
     instructionDiv.innerHTML = `<p>${instruction}</p>`;
 }
 
 // game steps
-const showGameSizeChoice = (state, nextGameStep) => {
+const chooseGameSizeStep = (state, nextGameStep) => {
     setInstruction('How many cards can you remember?');
     insertCards(gameSizes);
 
     const cards = getCards();
-    cards.forEach(el => el.addEventListener("click", e => {
-        const number = getCardNumber(e.target);
-        cards.forEach(hideCard);
+
+    cards.forEach(card => card.$node.addEventListener("click", e => {
+        const clickedCard = new Card(e.target);
+        const number = clickedCard.getNumber();
+        cards.forEach(card => card.remove);
+
         const newState = {...state, gameSize: number};
         nextGameStep(newState);
     }));
 }
 
-const memorizeCards = async (state, nextGameStep) => {
+const memorizationStep = async (state, nextGameStep) => {
     setInstruction('Loading cards...');
 
     const cardCount = state.gameSize;
@@ -90,39 +149,20 @@ const memorizeCards = async (state, nextGameStep) => {
     }
 }
 
-const isLowest = (number, set) => number === Math.min(...set);
-const remove = (number, set) => set.splice(set.indexOf(number), 1)
-
-const guessingPhase = (state, nextGameStep) => {
+const guessingStep = (state, nextGameStep) => {
     setInstruction('Now, click the cards in order, from lowest to highest.');
 
-    let hiddenCards = [...state.cardNumbers];
+    flipDownCards();
 
     let score = 0
+    const addPoint = () => score += 1;
 
     const endRound = () => {
-        hideCards();
+        removeCards();
         nextGameStep({...state, score});
     }
 
-    getCards().forEach((card, index) => {
-        // rolling thunder
-        setTimeout(flipDown(card), index * 50);
-
-        card.addEventListener("click", e => {
-            const number = getCardNumber(card);
-            if (isLowest(number, hiddenCards)) {
-                flipUp(card);
-                // fixme: mutation
-                remove(number, hiddenCards);
-                score += 1;
-            }
-
-            if (!hiddenCards.length) {
-                endRound()
-            }
-        })
-    });
+    activateCardsForPlay(endRound, addPoint);
 
     buttonDiv.innerHTML = "<button>I Give Up :(</button>";
     buttonDiv.onclick = () => {
@@ -130,12 +170,12 @@ const guessingPhase = (state, nextGameStep) => {
     }
 }
 
-const scoringPhase = (state, nextGameStep) => {
+const reviewScoreStep = (state, nextGameStep) => {
     setInstruction('Your score is:');
 
     const {score, gameSize} = state;
 
-    const perfect = score === gameSize;
+    const perfect = (score === gameSize);
 
     gameDiv.innerHTML = `
         <div id="final-score" class="${perfect ? 'perfect': ''}">
@@ -163,10 +203,10 @@ const scoringPhase = (state, nextGameStep) => {
 // TODO: use a generator function here;
 // FIXME: this will overflow the stack after enough games without a page refresh
 const startGame = async () => {
-    showGameSizeChoice({},
-        (state2) => memorizeCards(state2,
-            (state3)=> guessingPhase(state3,
-                (state4) => scoringPhase(state4,
+    chooseGameSizeStep({},
+        (state2) => memorizationStep(state2,
+            (state3)=> guessingStep(state3,
+                (state4) => reviewScoreStep(state4,
                         startGame
                     )
                 )
