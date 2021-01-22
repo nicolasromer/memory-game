@@ -5,11 +5,9 @@ This is a memory game played with numbered cards. How many cards can you keep in
 Play if you dare!
 
 ## Approach and Technical Roadmap
-I decided to use no frameworks or packages here, just vanilla ES6 javascript. I wanted to create my own server on Node.js rather than using express or fastify. I would have used Typescript if I had more time to work on this, there are a couple places where I noted types and interfaces to implement later. I only rely on the `node-fetch` package for the tests.
+I decided to use no frameworks or packages here, just vanilla ES6 javascript for a few reasons.  I wanted to create my own server on Node.js rather than using express or fastify. I would have used Typescript if I had more time to work on this, there are a couple places where I noted types and interfaces to implement later. I only rely on the `node-fetch` package for the tests. I implemented CommonJS modules without webpack, I think this only works on Chrome. I chose this setup for now to prioritize development speed, and I wanted to re-learn some JS and Node fundamentals. 
 
 I left many `TODO` and `Ticket` notations around. These are opportunities to properly answer some questions I had or delegate if I had some other devs. Normally I would create a ticket and leave the ticket number in the code if I ever left a TODO or FIXME.
-
-Since this is pretty trivial I have kept the server and script code in one file. If we keep adding stuff I would break it into many JS modules to separate layers of abstraction and clean things up. I would set up webpack and babel to allow `import`s and experimental js features. 
 
 There remains a lot of work on the front end:
 - accessibility (keyboard access, aria attributes)
@@ -29,8 +27,7 @@ There is only one test set for the `/cards` endpoint. Needs more tests!
   stateProperty: null // the property in the state this step would be allowed to set
 }
 ```
-- create a `Card` class to house all the card helper functions and card state
-- improve server code to better split concerns:
+- improve server code to better split concerns (maybe just move to Express.js):
   - routing
   - error handling
   - security
