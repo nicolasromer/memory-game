@@ -35,7 +35,7 @@ Backend could also use lots of work:
 
 ## To Run server
 *n.b: developed with node 10 and only tested on Chrome*
-*I'm pretty sure chrome is required*
+*, I'm pretty sure chrome is required*
 - clone the repo and `cd` into the root
 - run `npm install`
 - run `npm run start`

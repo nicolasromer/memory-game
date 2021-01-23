@@ -60,6 +60,8 @@ http.createServer(function (request, response) {
         const content = JSON.stringify(cards);
         response.writeHead(200, {'Content-Type': 'text/json'});
         response.end(content, 'utf-8');
+
+        return;
     }
 
     // Serve Static Files
