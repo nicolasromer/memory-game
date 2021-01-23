@@ -5,32 +5,23 @@ This is a memory game played with numbered cards. How many cards can you keep in
 Play if you dare!
 
 ## Approach and Technical Roadmap
-I decided to use no frameworks or packages here, just vanilla ES6 javascript for a few reasons.  I wanted to create my own server on Node.js rather than using express or fastify. I would have used Typescript if I had more time to work on this, there are a couple places where I noted types and interfaces to implement later. I only rely on the `node-fetch` package for the tests. I implemented CommonJS modules without webpack, I think this only works on Chrome. I chose this setup for now to prioritize development speed, and I wanted to re-learn some JS and Node fundamentals. 
-
-I left many `TODO` and `Ticket` notations around. These are opportunities to properly answer some questions I had or delegate if I had some other devs. Normally I would create a ticket and leave the ticket number in the code if I ever left a TODO or FIXME.
+- I decided to use no frameworks or packages here, just vanilla ES6 javascript for a few reasons.  I wanted to create my own server on Node.js rather than using express or fastify. I only rely on the `node-fetch` package for the tests.  I chose this setup for now to prioritize development speed, and I wanted to re-learn some JS and Node fundamentals.
+-  I would have used some Typescript if I had more time to work on this, there are a couple places where I noted types and interfaces to implement later.
+- I implemented CommonJS modules without webpack, I think this only works on Chrome.
+- Today I learned about Generator functions. I used one for the game-step manager.
+- I left many `TODO` and `Ticket` notations around. These are opportunities to properly answer some questions I had or delegate if I had some other devs. Normally I would create a ticket and leave the ticket number in the code if I ever left a TODO or FIXME.
 
 There remains a lot of work on the front end:
 - accessibility (keyboard access, aria attributes)
 - improve animation
 - test on other browsers, operating systems, and devices
+- implement webpack to transpile js so all the bleeding edge language features work on IE and safari
 
-There is only one test set for the `/cards` endpoint. Needs more tests!
-
-### Refactor Plan:
-- learn more about generator functions, and can we use one for the central game orchestration?
-- create an array of objects, with each object as a 'Phase' of the game, and an interface for phases:
-```javascript
-{
-  name: "memorize",
-  setup: "setUpMemorizeStep",
-  cleanup: "cleanUpMemorizeStep",
-  stateProperty: null // the property in the state this step would be allowed to set
-}
-```
+Backend could also use lots of work:
+- There is only one test set for the `/cards` endpoint. Needs more tests!
 - improve server code to better split concerns (maybe just move to Express.js):
-  - routing
-  - error handling
-  - security
+- routing is pretty sad right now
+- consider security and rate limiting
     
 ### If my game goes viral and I need to serve millions of users and grow the company
 - serve static assets from a cdn
@@ -42,13 +33,9 @@ There is only one test set for the `/cards` endpoint. Needs more tests!
 - enforce strict Typescript to reduce bugs as devs onboard
 
 
-
-
-
-
-
 ## To Run server
 *n.b: developed with node 10 and only tested on Chrome*
+*I'm pretty sure chrome is required*
 - clone the repo and `cd` into the root
 - run `npm install`
 - run `npm run start`

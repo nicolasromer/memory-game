@@ -1,6 +1,6 @@
 import Card, {getHtml} from "../elements/Card.js";
 
-class Game {
+class CardSet {
     /* Private */
     container;
 
@@ -68,4 +68,4 @@ class Game {
     }
 }
 
-export default Game;
+export default CardSet;
